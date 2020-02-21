@@ -25,18 +25,18 @@ bankAccounts.prototype.findAccount = function (id) {
     return false;
 }
 
-bankAccounts.prototype.changeAccount = function (id) {
-    for (var i = 0; i < this.accounts.length; i++) {
-        if (this.accounts[i]) {
-            if (this.accounts[i].id == id) {
-                console.log(this.accounts[i].accountAmount);
-                return this.accounts[i].accountAmount;
 
-            }
-        }
-    };
-    return false;
+
+
+bankAccounts.prototype.withdrawal = function (amount) {
+    this.accountAmount -= amount;
+    return this.accountAmount;
 }
+
+// bankAccounts.prototype.depositTwo = function (amount) {
+//     this.accountAmount += amount;
+//     return this.balance;
+// }
 
 // Business Logic for Contacts ---------
 function Account(accountName, accountAmount) {
@@ -45,55 +45,64 @@ function Account(accountName, accountAmount) {
 }
 
 
+
+
+
+
+
 // User Interface Logic ---------
 var bankAccounts = new bankAccounts();
-
-function displayAccountDetails(addressBookToDisplay) {
-    var contactsList = $("ul#accounts");
-    var htmlForContactInfo = "";
-    addressBookToDisplay.accounts.forEach(function (account) {
-        htmlForContactInfo += "<li id=" + account.id + ">" + account.accountName + " " + account.accountAmount + "</li>";
-    });
-    contactsList.html(htmlForContactInfo);
-};
-
-function showAccounts(accountId) {
-    var account = bankAccounts.findAccount(accountId);
-    $("#show-account").show();
-    $(".first-name").html(account.accountName);
-    $(".last-name").html(account.accountAmount);
-    var buttons = $("#buttons");
-    buttons.empty();
-    //buttons.append("<button class='deleteButton' id=" + account.id + ">Delete</button>");
-    buttons.append("<input type='text' class='new-deposit'></input> <button class='makeDeposit' id=" + account.id + ">Make Deposit</button>");
-    var newAmount = parseInt($(".makeDeposit").val());
-    console.log(newAmount);
-    var show = newAmount + bankAccounts.accounts[0].accountAmount
-    $("#show-deposit").append(show);
-}
-
-function attachAccountListeners() {
-    $("ul#accounts").on("click", "li", function () {
-        showAccounts(this.id);
-    });
-    $("#buttons").on("click", ".makeDeposit", function () {
-        bankAccounts.changeAccount(this.id);
-        //$("#show-account").hide();
-        displayAccountDetails(bankAccounts);
-    });
-};
-
 $(document).ready(function () {
+    function displayAccountDetails(addressBookToDisplay) {
+        var contactsList = $("ul#accounts");
+        var htmlForContactInfo = "";
+        addressBookToDisplay.accounts.forEach(function (account) {
+            htmlForContactInfo += "<li id=" + account.id + ">" + account.accountName + " " + account.accountAmount + "</li>";
+        });
+        contactsList.html(htmlForContactInfo);
+    };
+
+    function showAccounts(accountId) {
+        var account = bankAccounts.findAccount(accountId);
+        $("#show-account").show();
+        $(".first-name").html(account.accountName);
+        $(".last-name").html(account.accountAmount);
+
+        $("form#01").submit(function () {
+            event.preventDefault();
+            var inputtedAmount2 = parseInt($("input.new-deposit-amount2").val());
+            console.log(inputtedAmount2);
+            account.accountAmount += inputtedAmount2;
+            $(".last-name").html(account.accountAmount);
+        });
+
+    };
+
+
+
+    function attachAccountListeners() {
+        $("ul#accounts").on("click", "li", function () {
+            showAccounts(this.id);
+        });
+        $("#buttons").on("click", ".makeDeposit", function () {
+            bankAccounts.changeAccount(this.id);
+            //$("#show-account").hide();
+            displayAccountDetails(bankAccounts);
+        });
+    };
+
+
     attachAccountListeners();
     $("form#new-account").submit(function (event) {
         event.preventDefault();
         var inputtedName = $("input#new-name").val();
-        var inputtedAmount = $("input#new-deposit-amount").val();
+        var inputtedAmount = parseInt($("input#new-deposit-amount").val());
+        var inputtednewInput = 0;
         $("input#new-name").val("");
         $("input#new-deposit-amount").val("");
-        var newAccount = new Account(inputtedName, inputtedAmount);
+        var newAccount = new Account(inputtedName, inputtedAmount, inputtednewInput);
         bankAccounts.addAccount(newAccount);
         displayAccountDetails(bankAccounts);
         console.log(bankAccounts.accounts);
-    })
-})
+    });
+});
