@@ -28,15 +28,17 @@ bankAccounts.prototype.findAccount = function (id) {
 
 
 
-bankAccounts.prototype.withdrawal = function (amount) {
-    this.accountAmount -= amount;
-    return this.accountAmount;
-}
-
-// bankAccounts.prototype.depositTwo = function (amount) {
-//     this.accountAmount += amount;
-//     return this.balance;
+// bankAccounts.prototype.withdrawal = function (amount) {
+//     this.accountAmount -= amount;
+//     return this.accountAmount;
 // }
+
+// bankAccounts.prototype.depositTwo = function (inputtedAmount2) {
+//     this.accountAmount += inputtedAmount2;
+//     return this.accountAmount;
+// }
+
+
 
 // Business Logic for Contacts ---------
 function Account(accountName, accountAmount) {
@@ -52,46 +54,56 @@ function Account(accountName, accountAmount) {
 
 // User Interface Logic ---------
 var bankAccounts = new bankAccounts();
-$(document).ready(function () {
-    function displayAccountDetails(addressBookToDisplay) {
-        var contactsList = $("ul#accounts");
-        var htmlForContactInfo = "";
-        addressBookToDisplay.accounts.forEach(function (account) {
-            htmlForContactInfo += "<li id=" + account.id + ">" + account.accountName + " " + account.accountAmount + "</li>";
-        });
-        contactsList.html(htmlForContactInfo);
-    };
 
-    function showAccounts(accountId) {
-        var account = bankAccounts.findAccount(accountId);
-        $("#show-account").show();
-        $(".first-name").html(account.accountName);
+function displayAccountDetails(addressBookToDisplay) {
+    var contactsList = $("ul#accounts");
+    var htmlForContactInfo = "";
+    addressBookToDisplay.accounts.forEach(function (account) {
+        htmlForContactInfo += "<li id=" + account.id + ">" + account.accountName + " " + account.accountAmount + "</li>";
+    });
+    contactsList.html(htmlForContactInfo);
+};
+
+function showAccounts(accountId) {
+    var account = bankAccounts.findAccount(accountId);
+    $("#show-account").show();
+    $(".first-name").html(account.accountName);
+    $(".last-name").html(account.accountAmount);
+
+    $("form#01").submit(function () {
+        event.preventDefault();
+        var inputtedAmount1 = parseInt($("input.new-deposit-amount2").val());
+
+        // bankAccounts.depositTwo(inputtedAmount2);
+        console.log(inputtedAmount1);
+        account.accountAmount += inputtedAmount1;
         $(".last-name").html(account.accountAmount);
+    });
+    $("form#02").submit(function () {
+        event.preventDefault();
+        var inputtedAmount2 = parseInt($("input.new-withdrawl-amount").val());
+        // bankAccounts.depositTwo(inputtedAmount2);
+        console.log(inputtedAmount2);
+        account.accountAmount -= inputtedAmount2;
+        $(".last-name").html(account.accountAmount);
+    });
 
-        $("form#01").submit(function () {
-            event.preventDefault();
-            var inputtedAmount2 = parseInt($("input.new-deposit-amount2").val());
-            console.log(inputtedAmount2);
-            account.accountAmount += inputtedAmount2;
-            $(".last-name").html(account.accountAmount);
-        });
-
-    };
-
-
-
-    function attachAccountListeners() {
-        $("ul#accounts").on("click", "li", function () {
-            showAccounts(this.id);
-        });
-        $("#buttons").on("click", ".makeDeposit", function () {
-            bankAccounts.changeAccount(this.id);
-            //$("#show-account").hide();
-            displayAccountDetails(bankAccounts);
-        });
-    };
+};
 
 
+
+function attachAccountListeners() {
+    $("ul#accounts").on("click", "li", function () {
+        showAccounts(this.id);
+    });
+    $("#buttons").on("click", ".makeDeposit", function () {
+        bankAccounts.changeAccount(this.id);
+        //$("#show-account").hide();
+        displayAccountDetails(bankAccounts);
+    });
+};
+
+$(document).ready(function () {
     attachAccountListeners();
     $("form#new-account").submit(function (event) {
         event.preventDefault();
